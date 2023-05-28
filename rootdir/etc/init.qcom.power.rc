@@ -26,12 +26,12 @@
 #
 
 on early-init
-    # Disable EAS
-    write /proc/sys/kernel/sched_energy_aware 0
+    # EAS
+    write /proc/sys/kernel/sched_energy_aware 1
 
 on init
     # Disable powersaving
-    write /sys/module/lpm_levels/parameters/sleep_disabled 1
+    write /sys/module/lpm_levels/parameters/sleep_disabled 0
 
     # Create cgroup mount point for memory
     mkdir /sys/fs/cgroup/memory/bg 0750 root system
@@ -55,12 +55,12 @@ on init
     # Configure governor settings for little cluster
     write /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor "schedutil"
     write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/up_rate_limit_us 500
-    write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/down_rate_limit_us 20000
+    write /sys/devices/system/cpu/cpu0/cpufreq/schedutil/down_rate_limit_us 600
 
     # Configure governor settings for big cluster
     write /sys/devices/system/cpu/cpu6/cpufreq/scaling_governor "schedutil"
     write /sys/devices/system/cpu/cpu6/cpufreq/schedutil/up_rate_limit_us 500
-    write /sys/devices/system/cpu/cpu6/cpufreq/schedutil/down_rate_limit_us 20000
+    write /sys/devices/system/cpu/cpu6/cpufreq/schedutil/down_rate_limit_us 500
 
     # Configure default schedTune value for foreground/top-app
     write /dev/stune/foreground/schedtune.prefer_idle 1
@@ -187,7 +187,7 @@ on enable-low-power
     write /sys/class/drm/card0/device/idle_timeout_ms 100
 
     # Enable PowerHAL hint processing
-    setprop vendor.powerhal.init 1
+    setprop vendor.powerhal.init 0
 
     # Runtime fs tuning
     write /sys/block/sda/queue/nr_requests 128
@@ -198,10 +198,10 @@ on enable-low-power
 
     # Set cpuset parameters
     write /dev/cpuset/top-app/cpus 0-7
-    write /dev/cpuset/foreground/cpus 0-5,7
-    write /dev/cpuset/background/cpus 4-5
-    write /dev/cpuset/system-background/cpus 2-5
-    write /dev/cpuset/restricted/cpus 2-5
+    write /dev/cpuset/foreground/cpus 0-5
+    write /dev/cpuset/background/cpus ´0-5
+    write /dev/cpuset/system-background/cpus 0-5
+    write /dev/cpuset/restricted/cpus 0-5
 
     # Post-setup services
     setprop vendor.post_boot.parsed 1
